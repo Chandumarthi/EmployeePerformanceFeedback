@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Feedback Selection Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .employee-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.5);
+            padding: 40px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+            transition: transform 0.3s ease;
+        }
+
+        .employee-container:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .employee-container h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .employee-select {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .employee-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .employee-select:hover {
+            border-color: #667eea;
+        }
+
+        .start-feedback-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-feedback-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .start-feedback-btn:active {
+            transform: translateY(0);
+        }
+
+        .view-performance-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .view-performance-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .performance-container {
+            display: none;
+            text-align: left;
+            margin-top: 30px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .performance-container h3 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .employee-performance-card {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(245, 87, 108, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .employee-performance-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.2);
+        }
+
+        .employee-name-header {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .average-rating {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .rating-category {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .rating-category:last-child {
+            border-bottom: none;
+        }
+
+        .category-name {
+            font-weight: 600;
+            color: #555;
+            flex: 1;
+        }
+
+        .category-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-stars {
+            font-size: 1.3em;
+            color: #ffd700;
+        }
+
+        .category-value {
+            font-weight: 700;
+            color: #333;
+            min-width: 30px;
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        .back-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .feedback-count {
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .feedback-form {
+            display: none;
+            text-align: left;
+            margin-top: 30px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback-form h3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .question-counter {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 16px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateX(5px);
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .required-indicator {
+            color: #e05a50;
+            font-size: 0.9em;
+            margin-left: 5px;
+            font-weight: 700;
+        }
+
+        .form-group.required-not-answered {
+            border-color: #e05a50;
+            background: linear-gradient(135deg, rgba(224, 90, 80, 0.1) 0%, rgba(224, 90, 80, 0.05) 100%);
+            animation: pulseWarning 0.5s ease;
+        }
+
+        @keyframes pulseWarning {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message {
+            color: #e05a50;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .form-group.required-not-answered .error-message {
+            display: block;
+        }
+
+        .star-rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            font-size: 2.5rem;
+            user-select: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .star-rating span {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0 5px;
+            display: inline-block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            font-size: 2.5rem;
+        }
+
+        .star-rating span:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .star-rating .star-empty {
+            opacity: 0.4;
+        }
+
+        .star-rating .star-filled {
+            opacity: 1;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+        }
+
+        .star-rating .hover {
+            opacity: 0.7;
+            transform: scale(1.1);
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .thanks-container {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            animation: fadeInScale 0.8s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .thanks-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .thanks-container h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .thanks-container p {
+            color: #666;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            line-height: 32px;
+            text-align: center;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .employee-container {
+                padding: 25px;
+            }
+
+            .employee-container h2 {
+                font-size: 2em;
+            }
+
+            .star-rating {
+                font-size: 2rem;
+            }
+
+            .form-group {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="employee-container" id="employeeContainer">
+            <h2>✨ Employee Feedback Portal</h2>
+            <p class="subtitle">Help us grow together with your valuable feedback</p>
+            <label for="employeeSelect" style="display: block; font-weight: 600; margin-bottom: 10px; color: #555;">
+                Select Employee to give Feedback:
+            </label>
+            <select id="employeeSelect" class="employee-select">
+                <option value="" disabled selected>Choose an employee...</option>
+                <option value="Priya Sharma">👩‍💼 Priya Sharma</option>
+                <option value="Rahul Kumar">👨‍💼 Rahul Kumar</option>
+                <option value="Ananya Patel">👩‍💻 Ananya Patel</option>
+                <option value="Arjun Singh">👨‍🔬 Arjun Singh</option>
+                <option value="Sneha Reddy">👩‍🎨 Sneha Reddy</option>
+            </select>
+            <button class="start-feedback-btn" id="startFeedback">Start Feedback</button>
+            <button class="view-performance-btn" id="viewPerformance" style="margin-top: 15px;">📊 View Employee Performance</button>
+            
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <form id="feedbackForm" class="feedback-form">
+                <h3 id="feedbackTitle"></h3>
+                <div class="question-counter" id="questionCounter"></div>
+                
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">1</span>How would you rate this employee's Communication skills?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="1">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q1_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">2</span>How would you rate their Teamwork and Collaboration abilities?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="2">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q2_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">3</span>How effectively does the employee manage their time and meet deadlines?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="3">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q3_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">4</span>How would you rate their Problem-solving and Critical thinking skills?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="4">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q4_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">5</span>How would you rate their Leadership and Initiative?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="5">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q5_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">6</span>How would you rate their Creativity and Innovation?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="6">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q6_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">7</span>How would you rate their Adaptability and Flexibility?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="7">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q7_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">8</span>How would you rate their Professionalism and Work Ethics?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="8">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q8_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">9</span>How would you rate their Technical Skills and Knowledge?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="9">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q9_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group required-question" data-required="true">
+                    <label><span class="question-number">10</span>How would you rate their Overall Performance?<span class="required-indicator">*</span></label>
+                    <div class="star-rating" data-q="10">
+                        <span data-value="5" class="star-empty">☆</span>
+                        <span data-value="4" class="star-empty">☆</span>
+                        <span data-value="3" class="star-empty">☆</span>
+                        <span data-value="2" class="star-empty">☆</span>
+                        <span data-value="1" class="star-empty">☆</span>
+                        <input type="hidden" name="q10_rating" value="0">
+                    </div>
+                    <div class="error-message">⚠️ This question is required. Please provide a rating.</div>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="question-number">11</span>What are the key strengths you observed in this employee?</label>
+                    <textarea name="strengths" rows="4" placeholder="Share specific examples of their strengths..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><span class="question-number">12</span>What areas would you suggest for improvement?</label>
+                    <textarea name="improvement" rows="4" placeholder="Provide constructive feedback for growth..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Feedback ✨</button>
+            </form>
+
+            <div class="thanks-container" id="thanksContainer">
+                <div class="thanks-icon">🎉</div>
+                <h2>Thank You!</h2>
+                <p>Thank you for submitting your detailed feedback!</p>
+                <p>Your input is vital for our growth together. 🙏</p>
+                <p style="margin-top: 30px; color: #999; font-size: 1em;">We truly appreciate your time and valuable insights.</p>
+                <button class="back-btn" onclick="location.reload()">Submit Another Feedback</button>
+            </div>
+
+            <div class="performance-container" id="performanceContainer">
+                <h3>📊 Employee Performance Summary</h3>
+                <div id="performanceContent"></div>
+                <button class="back-btn" id="backToMain">← Back to Main</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startFeedback');
+        const empSelect = document.getElementById('employeeSelect');
+        const feedbackForm = document.getElementById('feedbackForm');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const thanksContainer = document.getElementById('thanksContainer');
+        const employeeContainer = document.getElementById('employeeContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const questionCounter = document.getElementById('questionCounter');
+
+        const totalQuestions = 12;
+        let answeredQuestions = 0;
+
+        startBtn.addEventListener('click', function() {
+            const emp = empSelect.value;
+            if (!emp) {
+                empSelect.style.borderColor = '#e05a50';
+                empSelect.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    empSelect.style.animation = '';
+                    empSelect.style.borderColor = '';
+                }, 500);
+                return;
+            }
+            empSelect.style.borderColor = '';
+            feedbackTitle.textContent = "📝 Feedback for " + emp;
+            feedbackForm.style.display = "block";
+            startBtn.style.display = "none";
+            empSelect.disabled = true;
+            progressBar.style.display = "block";
+            updateProgress();
+            updateQuestionCounter();
+        });
+
+        // Enhanced star rating with hover effects - empty stars that fill on selection
+        document.querySelectorAll('.star-rating').forEach(ratingGrp => {
+            const stars = Array.from(ratingGrp.querySelectorAll('span'));
+            const hiddenInput = ratingGrp.querySelector('input[type="hidden"]');
+            
+            function updateStarDisplay(hoverValue = null) {
+                const currentValue = parseInt(hiddenInput.value) || 0;
+                const displayValue = hoverValue !== null ? hoverValue : currentValue;
+                const isHovering = hoverValue !== null && hoverValue !== currentValue;
+                
+                stars.forEach(s => {
+                    const starVal = parseInt(s.getAttribute('data-value'));
+                    s.classList.remove('star-filled', 'star-empty', 'hover', 'selected');
+                    
+                    if (displayValue > 0 && starVal <= displayValue) {
+                        // Show filled stars
+                        s.textContent = '⭐';
+                        if (isHovering && starVal > currentValue) {
+                            // Hover preview - show with hover class
+                            s.classList.add('star-filled', 'hover');
+                        } else {
+                            // Actually selected stars
+                            s.classList.add('star-filled', 'selected');
+                        }
+                    } else {
+                        // Empty stars
+                        s.textContent = '☆';
+                        s.classList.add('star-empty');
+                    }
+                });
+            }
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const val = parseInt(star.getAttribute('data-value'));
+                    hiddenInput.value = val;
+                    updateStarDisplay(); // Show selected stars
+                    
+                    // Remove error state when answered
+                    const formGroup = ratingGrp.closest('.form-group');
+                    if (formGroup) {
+                        formGroup.classList.remove('required-not-answered');
+                    }
+                    
+                    // Add animation
+                    star.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        star.style.transform = '';
+                    }, 200);
+                    
+                    updateProgress();
+                    updateQuestionCounter();
+                });
+                
+                star.addEventListener('mouseenter', function() {
+                    const val = parseInt(star.getAttribute('data-value'));
+                    updateStarDisplay(val); // Show hover preview
+                });
+                
+                star.addEventListener('mouseleave', function() {
+                    updateStarDisplay(); // Show only selected stars
+                });
+            });
+            
+            // Initialize with empty stars
+            updateStarDisplay();
+        });
+
+        // Update progress bar
+        function updateProgress() {
+            const allRatings = document.querySelectorAll('.star-rating input[type="hidden"]');
+            let filled = 0;
+            allRatings.forEach(input => {
+                if (parseInt(input.value) > 0) {
+                    filled++;
+                }
+            });
+            answeredQuestions = filled;
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // Update question counter
+        function updateQuestionCounter() {
+            const allRatings = document.querySelectorAll('.star-rating input[type="hidden"]');
+            const textAreas = document.querySelectorAll('textarea');
+            let totalAnswered = 0;
+            
+            allRatings.forEach(input => {
+                if (parseInt(input.value) > 0) totalAnswered++;
+            });
+            
+            textAreas.forEach(textarea => {
+                if (textarea.value.trim().length > 0) totalAnswered++;
+            });
+            
+            questionCounter.textContent = `Progress: ${totalAnswered} of ${totalQuestions} questions answered`;
+        }
+
+        // Update counter on textarea change
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', updateQuestionCounter);
+        });
+
+        // Form submission with validation
+        feedbackForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Remove all previous error states
+            document.querySelectorAll('.form-group.required-not-answered').forEach(group => {
+                group.classList.remove('required-not-answered');
+            });
+            
+            // Check all required star rating questions
+            const requiredQuestions = document.querySelectorAll('.form-group.required-question');
+            let allAnswered = true;
+            let firstUnanswered = null;
+            
+            requiredQuestions.forEach(formGroup => {
+                const ratingInput = formGroup.querySelector('.star-rating input[type="hidden"]');
+                if (!ratingInput || parseInt(ratingInput.value) === 0) {
+                    allAnswered = false;
+                    formGroup.classList.add('required-not-answered');
+                    if (!firstUnanswered) {
+                        firstUnanswered = formGroup;
+                    }
+                }
+            });
+            
+            if (!allAnswered) {
+                // Show error message
+                const unansweredCount = document.querySelectorAll('.form-group.required-not-answered').length;
+                alert(`Please answer all ${unansweredCount} required star rating question(s) before submitting.`);
+                
+                // Scroll to first unanswered question
+                if (firstUnanswered) {
+                    firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+            
+            // Collect all feedback data
+            const feedbackData = {
+                employee: empSelect.value,
+                timestamp: new Date().toISOString(),
+                ratings: {},
+                strengths: document.querySelector('textarea[name="strengths"]').value.trim(),
+                improvement: document.querySelector('textarea[name="improvement"]').value.trim()
+            };
+
+            // Collect all ratings
+            const ratingInputs = document.querySelectorAll('.star-rating input[type="hidden"]');
+            const questionLabels = [
+                'Communication Skills',
+                'Teamwork and Collaboration',
+                'Time Management',
+                'Problem-solving and Critical Thinking',
+                'Leadership and Initiative',
+                'Creativity and Innovation',
+                'Adaptability and Flexibility',
+                'Professionalism and Work Ethics',
+                'Technical Skills and Knowledge',
+                'Overall Performance'
+            ];
+
+            ratingInputs.forEach((input, index) => {
+                const questionNum = index + 1;
+                feedbackData.ratings[`q${questionNum}`] = {
+                    question: questionLabels[index],
+                    rating: parseInt(input.value)
+                };
+            });
+
+            // Save to localStorage
+            saveFeedbackData(feedbackData);
+
+            // All required questions answered - submit form
+            feedbackForm.style.display = "none";
+            progressBar.style.display = "none";
+            thanksContainer.style.display = "block";
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Save feedback data to localStorage
+        function saveFeedbackData(data) {
+            let allFeedback = JSON.parse(localStorage.getItem('employeeFeedback') || '[]');
+            allFeedback.push(data);
+            localStorage.setItem('employeeFeedback', JSON.stringify(allFeedback));
+        }
+
+        // Get feedback data from localStorage
+        function getFeedbackData() {
+            return JSON.parse(localStorage.getItem('employeeFeedback') || '[]');
+        }
+
+        // Calculate average rating for an employee
+        function calculateAverageRating(feedbacks) {
+            if (feedbacks.length === 0) return 0;
+            let totalRating = 0;
+            let totalCount = 0;
+            
+            feedbacks.forEach(feedback => {
+                Object.values(feedback.ratings).forEach(ratingObj => {
+                    totalRating += ratingObj.rating;
+                    totalCount++;
+                });
+            });
+            
+            return totalCount > 0 ? (totalRating / totalCount).toFixed(2) : 0;
+        }
+
+        // Display performance data
+        function displayPerformance() {
+            const allFeedback = getFeedbackData();
+            const performanceContent = document.getElementById('performanceContent');
+            
+            if (allFeedback.length === 0) {
+                performanceContent.innerHTML = '<div class="no-data-message">No feedback data available yet. Please submit some feedback first.</div>';
+                return;
+            }
+
+            // Group feedback by employee
+            const employeeGroups = {};
+            allFeedback.forEach(feedback => {
+                if (!employeeGroups[feedback.employee]) {
+                    employeeGroups[feedback.employee] = [];
+                }
+                employeeGroups[feedback.employee].push(feedback);
+            });
+
+            // Get employee list from select
+            const employees = Array.from(empSelect.options).slice(1).map(opt => opt.value);
+            
+            let html = '';
+            
+            employees.forEach(employee => {
+                const feedbacks = employeeGroups[employee] || [];
+                if (feedbacks.length === 0) {
+                    html += `
+                        <div class="employee-performance-card">
+                            <div class="employee-name-header">
+                                <span>${employee}</span>
+                                <span class="average-rating">No Data</span>
+                            </div>
+                            <div class="no-data-message">No feedback submitted yet for this employee.</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Calculate averages for each category
+                const categoryAverages = {};
+                const categoryLabels = [
+                    'Communication Skills',
+                    'Teamwork and Collaboration',
+                    'Time Management',
+                    'Problem-solving and Critical Thinking',
+                    'Leadership and Initiative',
+                    'Creativity and Innovation',
+                    'Adaptability and Flexibility',
+                    'Professionalism and Work Ethics',
+                    'Technical Skills and Knowledge',
+                    'Overall Performance'
+                ];
+
+                categoryLabels.forEach((label, index) => {
+                    const qKey = `q${index + 1}`;
+                    let total = 0;
+                    let count = 0;
+                    
+                    feedbacks.forEach(feedback => {
+                        if (feedback.ratings[qKey]) {
+                            total += feedback.ratings[qKey].rating;
+                            count++;
+                        }
+                    });
+                    
+                    categoryAverages[qKey] = count > 0 ? (total / count).toFixed(2) : 0;
+                });
+
+                const overallAverage = calculateAverageRating(feedbacks);
+                
+                html += `
+                    <div class="employee-performance-card">
+                        <div class="employee-name-header">
+                            <span>${employee}</span>
+                            <span class="average-rating">Avg: ${overallAverage} ⭐</span>
+                        </div>
+                        <div class="feedback-count">Total Feedbacks: ${feedbacks.length}</div>
+                        <div style="margin-top: 20px;">
+                `;
+
+                categoryLabels.forEach((label, index) => {
+                    const qKey = `q${index + 1}`;
+                    const avgRating = parseFloat(categoryAverages[qKey]);
+                    const stars = '⭐'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
+                    
+                    html += `
+                        <div class="rating-category">
+                            <span class="category-name">${label}</span>
+                            <div class="category-rating">
+                                <span class="category-stars">${stars}</span>
+                                <span class="category-value">${avgRating}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            performanceContent.innerHTML = html;
+        }
+
+        // View performance button event
+        const viewPerformanceBtn = document.getElementById('viewPerformance');
+        const performanceContainer = document.getElementById('performanceContainer');
+        const backToMainBtn = document.getElementById('backToMain');
+
+        viewPerformanceBtn.addEventListener('click', function() {
+            displayPerformance();
+            // Hide main content
+            const mainContent = employeeContainer.querySelector('h2');
+            if (mainContent) mainContent.style.display = 'none';
+            const subtitle = employeeContainer.querySelector('.subtitle');
+            if (subtitle) subtitle.style.display = 'none';
+            const label = employeeContainer.querySelector('label[for="employeeSelect"]');
+            if (label) label.style.display = 'none';
+            empSelect.style.display = 'none';
+            startBtn.style.display = 'none';
+            viewPerformanceBtn.style.display = 'none';
+            feedbackForm.style.display = 'none';
+            thanksContainer.style.display = 'none';
+            progressBar.style.display = 'none';
+            // Show performance container
+            performanceContainer.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        backToMainBtn.addEventListener('click', function() {
+            location.reload();
+        });
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
